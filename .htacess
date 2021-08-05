@@ -1,0 +1,73 @@
+# Vérifier la validité du fichier .htacess via http://www.htaccesscheck.com/
+
+# Optimiser les images veut dire : adapter les tailles des images aux conteneurs et compressez les fichiers via https://compressor.io/ par exemple
+
+# Minifiez les ressources c'est en retirer les caractères inutiles tels que les espaces, sauts de lignes, commentaires et séparateurs de bloc via https://www.minifer.org/ ou http://compressmycode.com
+
+# Débloquer le téléchargement de la page : 1. En ajoutant Async (si l'ordre d'exécution n'a pas d'importance) ou defer au cas contaire dans nos balises script 2. Voir 3 ème partie du cours
+
+
+# Compression des fichiers statiques
+# Cours 
+SetOutputFilter DEFLATE
+AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/x-javascript
+
+BrowserMatch ^Mozilla/4 gzip-only-text/html
+BrowserMatch ^Mozilla/4\.0[678] no-gzip
+BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+BrowserMatch \bMSI[E] !no-gzip !gzip-only-text/html
+
+# Ou
+<IfModule mod_deflate.c> 
+    AddOutputFilterByType DEFLATE text/xhtml text/html text/plain text/xml text/javascript application/x-javascript text/css 
+    BrowserMatch ^Mozilla/4 gzip-only-text/html 
+    BrowserMatch ^Mozilla/4\.0[678] no-gzip 
+    BrowserMatch \bMSIE !no-gzip !gzip-only-text/html 
+    SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary 
+    Header append Vary User-Agent env=!dont-vary 
+</IfModule>  
+
+AddOutputFilterByType DEFLATE text/html  
+AddOutputFilterByType DEFLATE text/plain  
+AddOutputFilterByType DEFLATE text/xml  
+AddOutputFilterByType DEFLATE text/css  
+AddOutputFilterByType DEFLATE text/javascript
+AddOutputFilterByType DEFLATE font/opentype
+AddOutputFilterByType DEFLATE application/rss+xml
+AddOutputFilterByType DEFLATE application/javascript
+AddOutputFilterByType DEFLATE application/json 
+
+# Mise en cache des fichiers dans le navigateur
+# BEGIN Cache-Control Headers
+<IfModule mod_headers.c>
+<FilesMatch "\.(ico|jpe?g|png|gif|swf|css|gz)$">
+Header set Cache-Control "max-age=2592000, public"
+</FilesMatch>
+<FilesMatch "\.(js)$">
+Header set Cache-Control "max-age=2592000, private"
+</FilesMatch>
+<filesMatch "\.(html|htm)$">
+Header set Cache-Control "max-age=7200, public"
+</filesMatch>
+# Enleve le cache pour les ressources dynamiques
+<FilesMatch "\.(pl|php|cgi|spl|scgi|fcgi)$">
+Header unset Cache-Control
+</FilesMatch>
+</IfModule>
+# END Cache-Control Headers
+
+# BEGIN Expires Headers
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType image/jpg "access plus 1 year"
+ExpiresByType image/jpeg "access plus 1 year"
+ExpiresByType image/gif "access plus 1 year"
+ExpiresByType image/png "access plus 1 year"
+ExpiresByType text/css "access plus 1 month"
+ExpiresByType application/pdf "access plus 1 month"
+ExpiresByType text/x-javascript "access plus 1 month"
+ExpiresByType application/x-shockwave-flash "access plus 1 month"
+ExpiresByType image/x-icon "access plus 1 year"
+ExpiresDefault "access plus 2 days"
+</IfModule>
+# END Expires Headers
